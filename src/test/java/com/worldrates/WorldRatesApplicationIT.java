@@ -1,7 +1,6 @@
 package com.worldrates;
 
-import com.worldrates.app.boundary.ExchangeRateRepository;
-import com.worldrates.jobs.boundary.RateSyncJob;
+import com.worldrates.jobs.boundary.RatesSyncJob;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -13,13 +12,11 @@ import java.net.ServerSocket;
 import java.util.Map;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-class WorldRatesApplicationTests {
+class WorldRatesApplicationIT {
     @Autowired
-    RateSyncJob rateSyncJob;
+    RatesSyncJob ratesSyncJob;
     @Autowired
     TestRestTemplate testRestTemplate;
-    @Autowired
-    ExchangeRateRepository exchangeRateRepository;
 
     @BeforeAll
     public static void setup() throws Exception {
@@ -29,15 +26,15 @@ class WorldRatesApplicationTests {
     }
 
     @Test
-    void contextLoads() {
-        rateSyncJob.syncRates();
+    void shouldSyncRatesAndNotDuplicateThem() {
+        ratesSyncJob.syncRates();
         Map<String, Object> page1 = testRestTemplate.getForObject("/rates?date=2020-01-31&page=0&size=50", Map.class);
         Map<String, Object> page2 = testRestTemplate.getForObject("/rates?date=2020-01-31&page=1&size=50", Map.class);
 
         Assertions.assertEquals(64, (Integer) page1.get("totalElements"));
         Assertions.assertEquals(64, (Integer) page2.get("totalElements"));
 
-        rateSyncJob.syncRates();
+        ratesSyncJob.syncRates();
         page1 = testRestTemplate.getForObject("/rates?date=2020-01-31&page=0&size=50", Map.class);
         page2 = testRestTemplate.getForObject("/rates?date=2020-01-31&page=1&size=50", Map.class);
 

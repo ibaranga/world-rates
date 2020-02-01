@@ -7,12 +7,10 @@ import com.worldrates.providers.ecb.entity.EcbRates;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.math.RoundingMode;
 import java.net.URL;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -49,7 +47,7 @@ public class EcbProvider implements RatesProvider {
     }
 
     private Stream<ExchangeRate> convert(EcbRates rates) {
-        return rates.getRates().entrySet().stream().map(e -> new ExchangeRate(
+        return rates.getValues().entrySet().stream().map(e -> new ExchangeRate(
                 null,
                 getId(),
                 rates.getOrigCurrency(),

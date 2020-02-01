@@ -8,17 +8,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Component
-public class RateSyncJob {
-    private static final Logger LOG = LoggerFactory.getLogger(RateSyncJob.class);
+public class RatesSyncJob {
+    private static final Logger LOG = LoggerFactory.getLogger(RatesSyncJob.class);
 
     private final List<RatesProvider> providers;
     private final RatesSync ratesSync;
 
-    public RateSyncJob(List<RatesProvider> providers, RatesSync ratesSync) {
+    public RatesSyncJob(List<RatesProvider> providers, RatesSync ratesSync) {
         this.providers = providers;
         this.ratesSync = ratesSync;
     }
@@ -35,7 +34,7 @@ public class RateSyncJob {
 
         LOG.info("Got {} rates from {}. Now saving ...", dailyRates.size(), ratesProvider.getId());
 
-        ratesSync.sync(ratesProvider.getId(), dailyRates);
+        ratesSync.syncRates(ratesProvider.getId(), dailyRates);
 
         LOG.info("Saved {} rates from {}.", dailyRates.size(), ratesProvider.getId());
     }

@@ -3,6 +3,7 @@ package com.worldrates.jobs.control;
 import com.worldrates.app.boundary.ExchangeRateRepository;
 import com.worldrates.app.entity.ExchangeRate;
 import com.worldrates.app.entity.ExchangeRateKey;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -11,7 +12,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@Service
+@Component
 @Transactional
 public class RatesSync {
     private final ExchangeRateRepository exchangeRateRepository;
@@ -20,7 +21,7 @@ public class RatesSync {
         this.exchangeRateRepository = exchangeRateRepository;
     }
 
-    public void sync(String providerId, List<ExchangeRate> exchangeRates) {
+    public void syncRates(String providerId, List<ExchangeRate> exchangeRates) {
         Collection<LocalDate> dates = exchangeRates.stream().map(ExchangeRate::getDate).collect(Collectors.toSet());
 
         Map<ExchangeRateKey, ExchangeRate> existingRates = exchangeRateRepository.findByProviderIdAndDateIn(providerId, dates)

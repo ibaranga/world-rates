@@ -14,5 +14,5 @@ import java.util.Map;
 public class EcbRates {
     private LocalDate date;
     private String origCurrency;
-    private Map<String, BigDecimal> rates;
+    private Map<String, BigDecimal> values;
 }

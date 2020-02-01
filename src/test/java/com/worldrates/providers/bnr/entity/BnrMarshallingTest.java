@@ -12,10 +12,12 @@ import java.io.StringWriter;
 
 public class BnrMarshallingTest {
     @Test
-    void test2() throws Exception {
+    void testMarshallAndUnmarshall() throws Exception {
         Unmarshaller unmarshaller = JAXBContext.newInstance(DataSet.class).createUnmarshaller();
         Marshaller marshaller = JAXBContext.newInstance(DataSet.class).createMarshaller();
+
         DataSet dataSet = (DataSet) unmarshaller.unmarshal(new ClassPathResource("static/bnr-rates.xml").getURL());
+
         StringWriter sw = new StringWriter();
         marshaller.marshal(dataSet, sw);
         DataSet dataSet2 = (DataSet) unmarshaller.unmarshal(new StringReader(sw.toString()));

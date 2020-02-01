@@ -21,14 +21,15 @@ import java.util.stream.StreamSupport;
 import java.util.zip.ZipInputStream;
 
 public class EcbCsvParser {
-    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd MMMM yyyy");
-
     private static final EcbCsvParser DEFAULT_PARSER = new EcbCsvParser(
             "EUR",
             List.of("USD", "JPY", "BGN", "CZK", "DKK", "GBP", "HUF", "PLN", "RON", "SEK", "CHF", "ISK", "NOK",
                     "HRK", "RUB", "TRY", "AUD", "BRL", "CAD", "CNY", "HKD", "IDR", "ILS", "INR", "KRW", "MXN",
-                    "MYR", "NZD", "PHP", "SGD", "THB", "ZAR"));
-
+                    "MYR", "NZD", "PHP", "SGD", "THB", "ZAR"),
+            new CsvMapper(),
+            CsvSchema.emptySchema().withHeader(),
+            DateTimeFormatter.ofPattern("dd MMMM yyyy")
+    );
 
     private final String origCurrency;
     private final List<String> currencies;
@@ -36,10 +37,6 @@ public class EcbCsvParser {
     private final CsvMapper mapper;
     private final CsvSchema schema;
     private final DateTimeFormatter dateTimeFormatter;
-
-    public EcbCsvParser(String origCurrency, List<String> currencies) {
-        this(origCurrency, currencies, new CsvMapper(), CsvSchema.emptySchema().withHeader(), DATE_TIME_FORMATTER);
-    }
 
     public EcbCsvParser(String origCurrency, List<String> currencies, CsvMapper mapper, CsvSchema schema, DateTimeFormatter dateTimeFormatter) {
         this.origCurrency = origCurrency;
@@ -64,14 +61,7 @@ public class EcbCsvParser {
 
         Map<String, BigDecimal> rates = currencies.stream()
                 .filter(values::containsKey)
-                .collect(Collectors.toMap(Function.identity(), currency -> {
-                    try {
-                        return new BigDecimal(values.get(currency));
-                    } catch (Exception e) {
-                        System.out.println(currency + ", " + values.get(currency));
-                        return BigDecimal.ONE;
-                    }
-                }));
+                .collect(Collectors.toMap(Function.identity(), currency -> new BigDecimal(values.get(currency))));
 
         return new EcbRates(date, origCurrency, rates);
 
