@@ -1,0 +1,34 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:9.6
+    environment:
+      - POSTGRES_USER=worldrates
+      - POSTGRES_PASSWORD=worldrates
+  worldrates:
+    image: ib/worldrates
+    working_dir: /opt/worldrates
+    volumes:
+      - ./config:/opt/worldrates/config
+      - .m2:/root/.m2
+    build:
+      context: ../
+      dockerfile: Dockerfile.dev
+    depends_on:
+      - postgres
+    entrypoint: "java -jar ./bin/worldrates.jar --spring.config.location=./config/integration.properties"
+    healthcheck:
+      test: "curl http://worldrates:8080/rates?page=0&size=1"
+      timeout: 10s
+      retries: 3
+  integrationtest:
+    depends_on:
+      - worldrates
+    volumes:
+      - .m2:/root/.m2
+    build:
+      context: ../
+      dockerfile: Dockerfile.it
+    entrypoint: "mvn -Dtest=none -DfailIfNoTests=false -Dit.baseUrl=http://worldrates:8080 verify -Pit"
+
+

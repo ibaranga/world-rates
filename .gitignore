@@ -5,6 +5,11 @@ target/
 !**/src/test/**
 
 development/data
+development/.m2
+
+integration/data
+integration/.m2
+
 
 ### STS ###
 .apt_generated

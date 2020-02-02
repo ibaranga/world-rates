@@ -22,7 +22,7 @@ public class RatesSyncJob {
         this.ratesSync = ratesSync;
     }
 
-    @Scheduled(cron = "${app.sync.cron}")
+    @Scheduled(cron = "${app.sync.cron:-}")
     public void syncRates() {
         providers.forEach(this::syncRates);
     }

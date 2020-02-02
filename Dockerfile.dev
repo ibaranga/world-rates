@@ -1,0 +1,9 @@
+FROM maven:3.6.3-jdk-11-slim
+WORKDIR /opt/worldrates/
+COPY pom.xml .
+RUN mvn dependency:go-offline
+COPY src src
+RUN mvn clean install
+RUN mkdir bin
+RUN mv ./target/worldrates.jar ./bin/worldrates.jar
+ENTRYPOINT ["java", "-jar", "bin/worldrates.jar"]
