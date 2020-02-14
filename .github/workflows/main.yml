@@ -18,4 +18,4 @@ jobs:
         openshift_server_url: ${{ secrets.OPENSHIFT_SERVER_URL }}
         parameters: '{"apitoken": "${{ secrets.OPENSHIFT_API_TOKEN }}", "acceptUntrustedCerts": "true"}'
         cmd: |          
-          'oc apply -f k8s'
+          'apply -f k8s'
