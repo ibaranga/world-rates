@@ -10,9 +10,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component
@@ -33,21 +38,29 @@ public class EraProvider implements RatesProvider {
         return "ERA";
     }
 
+
     @Override
     public List<ExchangeRate> getDailyRates() {
+
         EraRates eraRates = rest.getForObject(url, EraRates.class);
+        return eraRates.getRates().entrySet()
+                .stream()
+                .map(entry -> getEntryExchangeRateFunction(eraRates, entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
+    }
 
-      //todo: date from json & base currency
-
-       return eraRates.getRates().entrySet().stream().map(entry -> new ExchangeRate(
+    private ExchangeRate getEntryExchangeRateFunction(EraRates eraRates, String currency, BigDecimal rate) {
+        return new ExchangeRate(
                 null,
                 getId(),
-                "EUR",
+                eraRates.getBase(),
                 BigDecimal.ONE,
-                entry.getKey(),
-                entry.getValue(),
-                LocalDate.now(),
+                currency,
+                rate,
+                LocalDate.parse(eraRates.getDate(), DateTimeFormatter.ISO_DATE),
                 LocalDateTime.now()
-        )).collect(Collectors.toList());
+        );
     }
+
+
 }
