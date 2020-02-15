@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: worlrates-cluster-ip-service
+spec:
+  type: ClusterIP
+  selector:
+    component: worldrates
+  ports:
+    - port: 8080
+      targetPort: 8080
