@@ -8,12 +8,12 @@ on:
       - master
 jobs:
   run:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v1
       - name: Run integration tests
         run: 'cd integration; docker-compose up --build --abort-on-container-exit'
-      - name: Docker build
+      - name: Docker build & push
         run:  |
           'echo "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin '
           'docker build -t ibaranga/worldrates:latest -t ibaranga/worldrates:$GIT_SHA -f Dockerfile . ' |
