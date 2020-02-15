@@ -11,24 +11,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-#       - name: Run integration tests
-#         run: 'cd integration; docker-compose up --build --abort-on-container-exit'
+      #       - name: Run integration tests
+      #         run: 'cd integration; docker-compose up --build --abort-on-container-exit'
       - name: Docker build & push
         run: |
           echo "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin 
-          docker build -t ibaranga/worldrates:latest -t ibaranga/worldrates:${{ github.sha }} -f Dockerfile . 
-          docker push ibaranga/worldrates:latest  
-          docker push ibaranga/worldrates:${{ github.sha }} 
+          docker build -t ibaranga/worldrates:latest -t ibaranga/worldrates:${{ github.sha }} -f Dockerfile .
+          docker push ibaranga/worldrates:latest
+          docker push ibaranga/worldrates:${{ github.sha }}
           docker logout
-#     - uses: actions/checkout@v1
-#     - name: OpenShift Action
-#       uses: redhat-developer/openshift-actions@v1.1
-#       with:
-#         version: 'latest'
-#         openshift_server_url: ${{ secrets.OPENSHIFT_SERVER_URL }}
-#         parameters: '{"apitoken": "${{ secrets.OPENSHIFT_API_TOKEN }}", "acceptUntrustedCerts": "true"}'
-#         cmd: |
-#           ' apply -f k8s ' |
-#           ' set image deployments/wordrates-deployment client=ibaranga/worldrates:$GIT_SHA '
-#
+      - uses: actions/checkout@v1
+      - name: OpenShift Action
+        uses: redhat-developer/openshift-actions@v1.1
+        with:
+          version: 'latest'
+          openshift_server_url: ${{ secrets.OPENSHIFT_SERVER_URL }}
+          parameters: '{"apitoken": "${{ secrets.OPENSHIFT_API_TOKEN }}", "acceptUntrustedCerts": "true"}'
+          cmd: |
+            ' apply -f k8s ' |
+            ' set image deployments/wordrates-deployment client=ibaranga/worldrates:${{ github.sha }} '
 

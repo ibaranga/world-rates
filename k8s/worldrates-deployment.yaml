@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worldrates-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      component: worldrates
+  template:
+    metadata:
+      labels:
+        component: worldrates
+    spec:
+      containers:
+        - image: ibaranga/worldrates
+          name: worldrates
+          ports:
+            - containerPort: 8080
+          env:
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: pguser
+                  key: PGUSER
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pgpassword
+                  key: PGPASSWORD
+            - name: PGHOST
+              value: postgres-cluster-ip-service
+            - name: PGPORT
+              value: '5432'
+            - name: PGDATABASE
+              value: postgres
+
