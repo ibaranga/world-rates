@@ -18,3 +18,6 @@ app:
     ecb:
       enabled: true
       url: 'https://www.ecb.europa.eu/stats/eurofxref/eurofxref.zip'
+    era:
+      enabled: true
+      url: 'https://api.exchangerate-api.com/v4/latest/EUR'
