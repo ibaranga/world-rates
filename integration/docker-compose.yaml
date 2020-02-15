@@ -6,14 +6,11 @@ services:
       - POSTGRES_USER=worldrates
       - POSTGRES_PASSWORD=worldrates
   worldrates:
-    image: ib/worldrates
+    image: ibaranga/worldrates
     working_dir: /opt/worldrates
     volumes:
       - ./config:/opt/worldrates/config
       - .m2:/root/.m2
-    build:
-      context: ../
-      dockerfile: Dockerfile
     depends_on:
       - postgres
     entrypoint: "java -jar ./bin/worldrates.jar --spring.config.location=./config/integration.properties"
