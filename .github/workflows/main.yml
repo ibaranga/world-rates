@@ -14,12 +14,11 @@ jobs:
 #       - name: Run integration tests
 #         run: 'cd integration; docker-compose up --build --abort-on-container-exit'
       - name: Docker build & push
-        run: |
-          'echo "test" | docker login -u "ibaranga" --password-stdin '
-          'docker build -t ibaranga/worldrates:latest -t ibaranga/worldrates:$GIT_SHA -f Dockerfile . ' 
-          'docker push ibaranga/worldrates:latest ' 
-          'docker push ibaranga/worldrates:$GIT_SHA '
-          'docker logout '
+        run: echo "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin 
+#           'docker build -t ibaranga/worldrates:latest -t ibaranga/worldrates:$GIT_SHA -f Dockerfile . ' 
+#           'docker push ibaranga/worldrates:latest ' 
+#           'docker push ibaranga/worldrates:$GIT_SHA '
+#           'docker logout '
 #     - uses: actions/checkout@v1
 #     - name: OpenShift Action
 #       uses: redhat-developer/openshift-actions@v1.1
