@@ -28,6 +28,6 @@ jobs:
           openshift_server_url: ${{ secrets.OPENSHIFT_SERVER_URL }}
           parameters: '{"apitoken": "${{ secrets.OPENSHIFT_API_TOKEN }}", "acceptUntrustedCerts": "true"}'
           cmd: |
-            ' apply -f k8s ' |
-            ' set image deployments/wordrates-deployment client=ibaranga/worldrates:${{ github.sha }} '
+            apply -f k8s
+            set image deployments/wordrates-deployment client=ibaranga/worldrates:${{ github.sha }}
 
