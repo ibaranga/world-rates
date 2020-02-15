@@ -29,5 +29,5 @@ jobs:
           parameters: '{"apitoken": "${{ secrets.OPENSHIFT_API_TOKEN }}", "acceptUntrustedCerts": "true"}'
           cmd: |
             apply -f k8s
-            set image deployments/wordrates-deployment client=ibaranga/worldrates:${{ github.sha }}
+            set image deployment.apps/worldrates-deployment worldrates=ibaranga/worldrates:${{ github.sha }}
 
