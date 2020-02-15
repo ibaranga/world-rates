@@ -17,6 +17,22 @@ spec:
           name: worldrates
           ports:
             - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8081
+            initialDelaySeconds: 10
+            timeoutSeconds: 2
+            periodSeconds: 5
+            failureThreshold: 4
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8081
+            initialDelaySeconds: 20
+            timeoutSeconds: 2
+            periodSeconds: 10
+            failureThreshold: 1
           env:
             - name: PGUSER
               valueFrom:

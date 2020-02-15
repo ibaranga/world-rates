@@ -8,14 +8,22 @@ spring:
 
 app:
   sync:
-    cron: '-'
+    cron: '0 1 0 * * *'
   providers:
     bnr:
-      enabled: false
+      enabled: true
       url: 'https://www.bnr.ro/nbrfxrates.xml'
     ecb:
-      enabled: false
+      enabled: true
       url: 'https://www.ecb.europa.eu/stats/eurofxref/eurofxref.zip'
     era:
       enabled: true
       url: 'https://api.exchangerate-api.com/v4/latest/EUR'
+
+management:
+  endpoints:
+    enabled-by-default: true
+  server:
+    port: 8081
+
+
