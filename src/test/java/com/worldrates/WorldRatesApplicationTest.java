@@ -40,29 +40,39 @@ class WorldRatesApplicationTest {
 
         RestPage<ExchangeRate> page1 = client.rates().getAll(date, 0, 50);
         RestPage<ExchangeRate> page2 = client.rates().getAll(date, 1, 50);
+        RestPage<ExchangeRate> page3 = client.rates().getAll(date, 2, 50);
 
         assertNotNull(page1);
         assertNotNull(page2);
+        assertNotNull(page3);
 
-        assertEquals(64, page1.getTotalElements());
+        assertEquals(115, page1.getTotalElements());
         assertEquals(50, page1.getContent().size());
 
-        assertEquals(64, page2.getTotalElements());
-        assertEquals(14, page2.getContent().size());
+        assertEquals(115, page2.getTotalElements());
+        assertEquals(50, page2.getContent().size());
+
+        assertEquals(115, page3.getTotalElements());
+        assertEquals(15, page3.getContent().size());
 
         ratesSyncJob.syncRates();
 
         page1 = client.rates().getAll(date, 0, 50);
         page2 = client.rates().getAll(date, 1, 50);
+        page3 = client.rates().getAll(date, 2, 50);
 
         assertNotNull(page1);
         assertNotNull(page2);
+        assertNotNull(page3);
 
-        assertEquals(64, page1.getTotalElements());
+        assertEquals(115, page1.getTotalElements());
         assertEquals(50, page1.getContent().size());
 
-        assertEquals(64, page2.getTotalElements());
-        assertEquals(14, page2.getContent().size());
+        assertEquals(115, page2.getTotalElements());
+        assertEquals(50, page2.getContent().size());
+
+        assertEquals(115, page3.getTotalElements());
+        assertEquals(15, page3.getContent().size());
 
     }
 

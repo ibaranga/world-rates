@@ -20,6 +20,9 @@ app:
     ecb:
       enabled: true
       url: 'http://localhost:${server.port}/ecb-eurofxref.zip'
+    era:
+      enabled: true
+      url: 'http://localhost:${server.port}/era-rates.json'
 
 logging:
   level:
