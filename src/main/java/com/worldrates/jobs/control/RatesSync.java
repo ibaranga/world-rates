@@ -3,20 +3,21 @@ package com.worldrates.jobs.control;
 import com.worldrates.app.boundary.ExchangeRateRepository;
 import com.worldrates.app.entity.ExchangeRate;
 import com.worldrates.app.entity.ExchangeRateKey;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@Component
+@ApplicationScoped
 @Transactional
 public class RatesSync {
     private final ExchangeRateRepository exchangeRateRepository;
 
+    @Inject
     public RatesSync(ExchangeRateRepository exchangeRateRepository) {
         this.exchangeRateRepository = exchangeRateRepository;
     }
@@ -36,6 +37,6 @@ public class RatesSync {
             }
         });
 
-        exchangeRateRepository.saveAll(exchangeRates);
+        exchangeRateRepository.persist(exchangeRates);
     }
 }

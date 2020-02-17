@@ -1,28 +1,30 @@
 package com.worldrates;
 
+import com.worldrates.app.boundary.ExchangeRateRepository;
 import com.worldrates.app.boundary.WorldRatesClient;
 import com.worldrates.app.entity.ExchangeRate;
 import com.worldrates.app.entity.RestPage;
-import com.worldrates.jobs.boundary.RatesSyncJob;
+import io.quarkus.test.common.http.TestHTTPResource;
+import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 
+import javax.inject.Inject;
 import java.net.ServerSocket;
+import java.net.URL;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@QuarkusTest
 class WorldRatesApplicationTest {
 
-    @Autowired
-    RatesSyncJob ratesSyncJob;
-    @Autowired
-    TestRestTemplate testRestTemplate;
+    @TestHTTPResource
+    URL url;
+
+    @Inject
+    ExchangeRateRepository repository;
 
     @BeforeAll
     public static void setup() throws Exception {
@@ -31,16 +33,18 @@ class WorldRatesApplicationTest {
         }
     }
 
+
     @Test
     void shouldSyncRatesAndNotDuplicateThem() {
+        WorldRatesClient worldRatesClient = new WorldRatesClient(url.toString(), ClientFactory.defaultClient());
+
         LocalDate date = LocalDate.of(2020, 1, 31);
-        WorldRatesClient client = new WorldRatesClient(testRestTemplate.getRestTemplate());
 
-        ratesSyncJob.syncRates();
+        worldRatesClient.admin().runRatesSync();
 
-        RestPage<ExchangeRate> page1 = client.rates().getAll(date, 0, 50);
-        RestPage<ExchangeRate> page2 = client.rates().getAll(date, 1, 50);
-        RestPage<ExchangeRate> page3 = client.rates().getAll(date, 2, 50);
+        RestPage<ExchangeRate> page1 = worldRatesClient.rates().getAll(date, 0, 50);
+        RestPage<ExchangeRate> page2 = worldRatesClient.rates().getAll(date, 1, 50);
+        RestPage<ExchangeRate> page3 = worldRatesClient.rates().getAll(date, 2, 50);
 
         assertNotNull(page1);
         assertNotNull(page2);
@@ -55,11 +59,11 @@ class WorldRatesApplicationTest {
         assertEquals(115, page3.getTotalElements());
         assertEquals(15, page3.getContent().size());
 
-        ratesSyncJob.syncRates();
+        worldRatesClient.admin().runRatesSync();
 
-        page1 = client.rates().getAll(date, 0, 50);
-        page2 = client.rates().getAll(date, 1, 50);
-        page3 = client.rates().getAll(date, 2, 50);
+        page1 = worldRatesClient.rates().getAll(date, 0, 50);
+        page2 = worldRatesClient.rates().getAll(date, 1, 50);
+        page3 = worldRatesClient.rates().getAll(date, 2, 50);
 
         assertNotNull(page1);
         assertNotNull(page2);

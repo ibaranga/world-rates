@@ -1,16 +1,15 @@
-spring:
+quarkus:
   datasource:
     url: "jdbc:postgresql://postgres:5432/worldrates"
     username: worldrates
     password: worldrates
-  jpa:
-    open-in-view: false
-    hibernate:
-      ddl-auto: none
+    driver: org.postgresql.Driver
+  flyway:
+    migrate-at-start: true
 
 app:
   sync:
-    cron: '-'
+    cron: "0 0 1 * * ?"
   providers:
     bnr:
       enabled: true

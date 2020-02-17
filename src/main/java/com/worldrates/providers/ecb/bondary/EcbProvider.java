@@ -4,10 +4,10 @@ import com.worldrates.app.boundary.RatesProvider;
 import com.worldrates.app.entity.ExchangeRate;
 import com.worldrates.providers.ecb.control.EcbCsvParser;
 import com.worldrates.providers.ecb.entity.EcbRates;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Component;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.io.IOException;
 import java.math.RoundingMode;
 import java.net.URL;
@@ -17,14 +17,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipInputStream;
 
-@Component
-@ConditionalOnProperty("app.providers.ecb.enabled")
+@Singleton
 public class EcbProvider implements RatesProvider {
 
     private final String url;
     private final EcbCsvParser ecbCsvParser;
 
-    public EcbProvider(@Value("${app.providers.ecb.url}") String url, EcbCsvParser ecbCsvParser) {
+    @Inject
+    public EcbProvider(@ConfigProperty(name = "app.providers.ecb.url") String url, EcbCsvParser ecbCsvParser) {
         this.url = url;
         this.ecbCsvParser = ecbCsvParser;
     }

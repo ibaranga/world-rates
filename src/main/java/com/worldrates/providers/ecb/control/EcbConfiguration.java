@@ -1,13 +1,14 @@
 package com.worldrates.providers.ecb.control;
 
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
-@Configuration
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Produces;
+
+@ApplicationScoped
 public class EcbConfiguration {
 
-    @Bean
+    @Produces
     public EcbCsvParser ecbCsvParser() {
         return EcbCsvParser.defaultParser();
     }

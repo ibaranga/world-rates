@@ -4,32 +4,31 @@ import com.worldrates.app.boundary.RatesProvider;
 import com.worldrates.app.entity.ExchangeRate;
 import com.worldrates.providers.bnr.entity.DataSet;
 import com.worldrates.providers.bnr.entity.Rate;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import javax.ws.rs.client.Client;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
-@ConditionalOnProperty("app.providers.bnr.enabled")
+@Singleton
 public class BnrProvider implements RatesProvider {
     private final String url;
-    private final RestTemplate rest;
+    private final Client client;
 
-    public BnrProvider(@Value("${app.providers.bnr.url}") String url, RestTemplate rest) {
+    @Inject
+    public BnrProvider(@ConfigProperty(name = "app.providers.bnr.url") String url, Client client) {
         this.url = url;
-        this.rest = rest;
+        this.client = client;
     }
 
     @Override
     public List<ExchangeRate> getDailyRates() {
-        DataSet dataSet = rest.getForObject(url, DataSet.class);
+        DataSet dataSet = client.target(url).request().get(DataSet.class);
         LocalDate pubDate = dataSet.getBody().getCube().get(0).getDate();
 
         return dataSet.getBody()

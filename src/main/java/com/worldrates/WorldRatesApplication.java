@@ -1,24 +1,27 @@
 package com.worldrates;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.web.client.RestTemplate;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-@EnableScheduling
-@EnableJpaRepositories
-@SpringBootApplication
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Produces;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+
+@ApplicationScoped
 public class WorldRatesApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(WorldRatesApplication.class, args);
+    @Produces
+    public Client restTemplate() {
+        return ClientBuilder.newClient();
     }
 
-    @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
+    @Produces
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper()
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .registerModule(new JavaTimeModule());
     }
 
 }

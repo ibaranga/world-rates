@@ -13,22 +13,23 @@ spec:
         component: worldrates
     spec:
       containers:
-        - image: ibaranga/worldrates
+        - image: ibaranga/worldrates:quarkus
+          imagePullPolicy: Always
           name: worldrates
           ports:
             - containerPort: 8080
           readinessProbe:
             httpGet:
-              path: /actuator/health
-              port: 8081
+              path: /health/ready
+              port: 8080
             initialDelaySeconds: 10
             timeoutSeconds: 2
             periodSeconds: 5
             failureThreshold: 4
           livenessProbe:
             httpGet:
-              path: /actuator/health
-              port: 8081
+              path: /health/live
+              port: 8080
             initialDelaySeconds: 20
             timeoutSeconds: 2
             periodSeconds: 10

@@ -3,24 +3,30 @@ package com.worldrates.jobs.boundary;
 import com.worldrates.app.boundary.RatesProvider;
 import com.worldrates.app.entity.ExchangeRate;
 import com.worldrates.jobs.control.RatesSync;
+import io.quarkus.scheduler.Scheduled;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.List;
 
-@Component
+@Singleton
 public class RatesSyncJob {
     private static final Logger LOG = LoggerFactory.getLogger(RatesSyncJob.class);
 
-    private final List<RatesProvider> providers;
+    private final Instance<RatesProvider> providers;
     private final RatesSync ratesSync;
     private final String cron;
 
-    public RatesSyncJob(List<RatesProvider> providers, RatesSync ratesSync, @Value("${app.sync.cron:-}") String cron) {
+    @Inject
+    public RatesSyncJob(
+            Instance<RatesProvider> providers,
+            RatesSync ratesSync,
+            @ConfigProperty(name = "app.sync.cron", defaultValue = "-") String cron) {
         this.providers = providers;
         this.ratesSync = ratesSync;
         this.cron = cron;
@@ -31,7 +37,7 @@ public class RatesSyncJob {
         LOG.info("Starting RatesSyncJob with {}", cron);
     }
 
-    @Scheduled(cron = "${app.sync.cron:-}")
+    @Scheduled(cron = "{app.sync.cron}")
     public void syncRates() {
         providers.forEach(this::syncRates);
     }

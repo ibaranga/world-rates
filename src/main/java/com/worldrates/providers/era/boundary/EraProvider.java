@@ -2,35 +2,30 @@ package com.worldrates.providers.era.boundary;
 
 import com.worldrates.app.boundary.RatesProvider;
 import com.worldrates.app.entity.ExchangeRate;
-import com.worldrates.providers.bnr.entity.DataSet;
 import com.worldrates.providers.era.entity.EraRates;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import javax.ws.rs.client.Client;
 import java.math.BigDecimal;
-import java.text.DateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@Component
-@ConditionalOnProperty("app.providers.era.enabled")
+@Singleton
 public class EraProvider implements RatesProvider {
 
 
     private final String url;
-    private final RestTemplate rest;
+    private final Client client;
 
-    public EraProvider(@Value("${app.providers.era.url}") String url, RestTemplate rest) {
+    @Inject
+    public EraProvider(@ConfigProperty(name = "app.providers.era.url") String url, Client client) {
         this.url = url;
-        this.rest = rest;
+        this.client = client;
     }
 
     @Override
@@ -42,7 +37,7 @@ public class EraProvider implements RatesProvider {
     @Override
     public List<ExchangeRate> getDailyRates() {
 
-        EraRates eraRates = rest.getForObject(url, EraRates.class);
+        EraRates eraRates = client.target(url).request().get(EraRates.class);
         return eraRates.getRates().entrySet()
                 .stream()
                 .map(entry -> getEntryExchangeRateFunction(eraRates, entry.getKey(), entry.getValue()))

@@ -7,5 +7,6 @@ RUN mvn clean install
 
 FROM openjdk:11.0.6-jre
 WORKDIR /opt/worldrates
-COPY --from=builder /opt/worldrates/target/worldrates.jar bin/worldrates.jar
-ENTRYPOINT ["java", "-jar", "bin/worldrates.jar"]
+COPY --from=builder /opt/worldrates/target/lib/* lib/
+COPY --from=builder /opt/worldrates/target/worldrates-runner.jar worldrates.jar
+ENTRYPOINT ["java", "-jar", "worldrates.jar"]

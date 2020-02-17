@@ -1,39 +1,41 @@
 package com.worldrates.app.boundary;
 
 import com.worldrates.app.entity.ExchangeRate;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import com.worldrates.app.entity.RestPage;
+import io.quarkus.panache.common.Page;
+import io.quarkus.panache.common.Sort;
 
+import javax.inject.Inject;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.ws.rs.*;
 import java.time.LocalDate;
 
-import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
-@RestController
+@Produces(APPLICATION_JSON)
+@Consumes(APPLICATION_JSON)
+@Path("/")
 public class ExchangeRateController {
     private final ExchangeRateRepository exchangeRateRepository;
 
+    @Inject
     public ExchangeRateController(ExchangeRateRepository exchangeRateRepository) {
         this.exchangeRateRepository = exchangeRateRepository;
     }
 
-    @GetMapping("/rates")
-    public Page<ExchangeRate> getRates(
-            @RequestParam(value = "date", required = false) @DateTimeFormat(iso = DATE) LocalDate date,
-            @RequestParam(value = "page", required = false, defaultValue =  "0") @Min(0) int page,
-            @RequestParam(value = "size", required = false, defaultValue = "10") @Min(0) @Max(200) int size
+    @GET
+    @Path("/rates")
+    public RestPage<ExchangeRate> getRates(
+            @QueryParam(value = "date") LocalDate date,
+            @QueryParam(value = "page") @DefaultValue("1") @Min(0) int page,
+            @QueryParam(value = "size") @DefaultValue("10")  @Min(0) @Max(200) int size
     ) {
 
         if (date == null) {
             date = LocalDate.now();
         }
 
-        return exchangeRateRepository.findByDate(date, PageRequest.of(page, size, Sort.by("createdAt")));
+        return exchangeRateRepository.findByDate(date, Page.of(page, size), Sort.ascending("createdAt"));
     }
 }

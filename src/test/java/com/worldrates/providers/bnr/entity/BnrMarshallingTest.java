@@ -2,7 +2,6 @@ package com.worldrates.providers.bnr.entity;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.core.io.ClassPathResource;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
@@ -16,7 +15,7 @@ public class BnrMarshallingTest {
         Unmarshaller unmarshaller = JAXBContext.newInstance(DataSet.class).createUnmarshaller();
         Marshaller marshaller = JAXBContext.newInstance(DataSet.class).createMarshaller();
 
-        DataSet dataSet = (DataSet) unmarshaller.unmarshal(new ClassPathResource("static/bnr-rates.xml").getURL());
+        DataSet dataSet = (DataSet) unmarshaller.unmarshal(getClass().getClassLoader().getResource("META-INF/resources/bnr-rates.xml"));
 
         StringWriter sw = new StringWriter();
         marshaller.marshal(dataSet, sw);

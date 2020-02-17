@@ -15,6 +15,6 @@ public class RestPage<T> {
     @JsonProperty("content")
     private final List<T> content;
     @JsonProperty("totalElements")
-    private final Integer totalElements;
+    private final Long totalElements;
 
 }
