@@ -1,0 +1,9 @@
+node_modules
+development
+frontend
+integration
+k8s
+.mvn
+.github
+.idea
+target
